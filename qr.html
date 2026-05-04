@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gerador de QR - RyzeCompliance</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: url("imag/gold34.jpg") center/cover fixed no-repeat; color: white; }
+    .card { background: rgba(2,6,23,0.7); max-width:640px; margin:40px auto; padding:20px; border-radius:12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="text-2xl font-bold mb-3">Gerador de QR — RyzeCompliance</h1>
+    <p class="text-gray-300 mb-4">Insira o IP da sua máquina (ex: <code>192.168.0.105</code>) e, se necessário, a porta do Live Server (ex: <code>5500</code>).</p>
+
+    <div class="grid gap-3 md:grid-cols-3 mb-4">
+      <div>
+        <label class="text-sm text-gray-300">IP da máquina</label>
+        <input id="host" class="w-full p-2 rounded bg-slate-800 text-white" placeholder="192.168.x.x" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-300">Porta</label>
+        <input id="port" class="w-full p-2 rounded bg-slate-800 text-white" placeholder="5500" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-300">Caminho (opcional)</label>
+        <input id="path" class="w-full p-2 rounded bg-slate-800 text-white" placeholder="ryzecompliance/index.html" />
+      </div>
+    </div>
+
+    <div class="flex gap-2 mb-4">
+      <button id="btnGen" class="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700">Gerar QR</button>
+      <button id="btnCopy" class="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600">Copiar URL</button>
+      <button id="btnAuto" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700">Preencher automaticamente</button>
+    </div>
+
+    <div id="preview" class="flex items-center gap-4">
+      <canvas id="qrcanvas"></canvas>
+      <div>
+        <div id="urlText" class="break-all text-sm text-gray-200 mb-2"></div>
+        <div class="text-xs text-gray-400">Escaneie com a câmera do celular para abrir o app.</div>
+      </div>
+    </div>
+
+    <p class="text-gray-400 mt-4 text-sm">Dica: se usar Live Server no VSCode, verifique a porta que ele abriu (ex: 5500). No celular, use o IP da máquina (não "localhost").</p>
+  </div>
+
+  <script>
+    const hostInput = document.getElementById('host');
+    const portInput = document.getElementById('port');
+    const pathInput = document.getElementById('path');
+    const btnGen = document.getElementById('btnGen');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnAuto = document.getElementById('btnAuto');
+    const urlText = document.getElementById('urlText');
+    const canvas = document.getElementById('qrcanvas');
+
+    // Tenta preencher a porta e caminho a partir da URL atual
+    (function prefillFromLocation(){
+      try {
+        const loc = window.location;
+        if(loc.port) portInput.value = loc.port;
+        // tenta inferir caminho base - sugere index.html na mesma pasta raiz
+        const pathname = loc.pathname.replace(/\/[^\/]*$/, '/'); // pasta atual
+        // Default path para abrir na homepage do app
+        pathInput.value = (pathname.endsWith('/') ? pathname + 'index.html' : pathname + 'index.html').replace(/^\//,'');
+      } catch(e){ /* ignore */ }
+    })();
+
+    function buildUrl(host, port, path){
+      host = host.trim();
+      port = (port||'').toString().trim();
+      path = (path||'').toString().trim();
+      if(!host) return "";
+      const proto = "http://";
+      const portPart = port ? `:${port}` : "";
+      let p = path || "index.html";
+      // remove leading slash if user colocou
+      if(p.startsWith('/')) p = p.slice(1);
+      return `${proto}${host}${portPart}/${p}`;
+    }
+
+    async function generate(){
+      const host = hostInput.value.trim();
+      if(!host){ alert("Digite o IP da máquina (ex: 192.168.0.105)"); hostInput.focus(); return; }
+      const url = buildUrl(host, portInput.value, pathInput.value);
+      urlText.textContent = url;
+      // limpa canvas
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // gera QR
+      try {
+        await QRCode.toCanvas(canvas, url, { width: 220, margin: 2 });
+      } catch(err){
+        alert("Erro ao gerar QR: " + err);
+      }
+    }
+
+    btnGen.addEventListener('click', generate);
+
+    btnAuto.addEventListener('click', () => {
+      // tenta detectar IP local aproximado usando location.hostname -> se for 127.0.0.1 sugere que você precisa colocar IP real
+      const locHost = window.location.hostname;
+      if(locHost === '127.0.0.1' || locHost === 'localhost') {
+        alert("Detectado 'localhost'. Coloque manualmente o IP da sua máquina (ex: 192.168.0.105). Use ipconfig no PC para achar o IP.");
+        hostInput.focus();
+        return;
+      }
+      hostInput.value = locHost;
+      if(window.location.port) portInput.value = window.location.port;
+      // ajusta path para index.html relativo
+      const pathGuess = window.location.pathname.replace(/^\//,'');
+      pathInput.value = pathGuess || "index.html";
+      generate();
+    });
+
+    btnCopy.addEventListener('click', () => {
+      const url = urlText.textContent;
+      if(!url) return alert("Gere o QR primeiro.");
+      navigator.clipboard?.writeText(url).then(()=> alert("URL copiada para a área de transferência"), ()=> alert("Falha ao copiar"));
+    });
+
+    // Gera um QR inicial só para visual (não funcional se host = localhost)
+    (function tryInitial(){
+      if(window.location.hostname && window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost'){
+        hostInput.value = window.location.hostname;
+        portInput.value = window.location.port || '';
+        pathInput.value = window.location.pathname.replace(/^\//,'') || 'index.html';
+        generate();
+      }
+    })();
+  </script>
+</body>
+</html>

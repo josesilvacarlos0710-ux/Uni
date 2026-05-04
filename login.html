@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - RyzenTech</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url("imag/hoje23.jpg") no-repeat center center/cover;
+      color: white;
+    }
+    .login-container {
+      background: rgba(0, 0, 30, 0.7);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      text-align: center;
+      width: 360px;
+    }
+    .logo-img {
+      width: 90px;
+      margin-bottom: 10px;
+    }
+    .logo-text {
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(145deg, #d9d9d9, #8c8c8c, #f5f5f5);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      font-size: 16px;
+      letter-spacing: 2px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    /* INPUTS COM ÍCONES */
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 40px; /* espaço geral */
+      padding-left: 42px; /* mais espaço para ícone da esquerda */
+      padding-right: 42px; /* mais espaço para ícone da direita */
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      font-size: 15px;
+      background: #fff;
+      color: #333;
+      box-sizing: border-box;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: #555;
+    }
+
+    .input-group .fa-user,
+    .input-group .fa-envelope,
+    .input-group .fa-lock {
+      left: 14px; /* ícone à esquerda */
+    }
+
+    .toggle-password {
+      right: 14px; /* ícone à direita */
+      cursor: pointer;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #00aaff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .login-container button:hover {
+      background: #0077be;
+    }
+    .toggle {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ddd;
+      cursor: pointer;
+    }
+    .toggle:hover {
+      text-decoration: underline;
+    }
+    .error {
+      color: #ff4d4d;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+  <!-- Ícones do Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="login-container">
+    <!-- Logo Dragão Prateado -->
+    <img src="Imag/drag logo.png" alt="Dragão Prateado" class="logo-img">
+    <div class="logo-text">G.F</div>
+    <div class="subtitle">Grupo Faberge</div>
+
+    <!-- Formulário de Login -->
+    <form id="loginForm">
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="loginUser" placeholder="Digite seu usuário" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="loginPass" placeholder="Digite sua senha" required>
+        <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+      </div>
+      <button type="submit">Entrar</button>
+      <div id="loginError" class="error"></div>
+      <div class="toggle" id="forgotPassword">Esqueci minha senha</div>
+    </form>
+
+    <!-- Formulário de Registro -->
+    <form id="registerForm" style="display:none;">
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="regUser" placeholder="Nome de usuário" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input type="email" id="regEmail" placeholder="Email" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="regPass" placeholder="Senha (mínimo 6 caracteres)" minlength="6" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="regConfirm" placeholder="Confirmar senha" required>
+      </div>
+      <button type="submit">Registrar</button>
+      <div id="registerError" class="error"></div>
+    </form>
+
+    <!-- Formulário de Recuperar Senha -->
+    <form id="resetForm" style="display:none;">
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="resetUser" placeholder="Usuário cadastrado" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input type="email" id="resetEmail" placeholder="Email cadastrado" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="newPass" placeholder="Nova senha (mín. 6 c/ especial)" required>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="confirmNewPass" placeholder="Confirmar nova senha" required>
+      </div>
+      <button type="submit">Redefinir Senha</button>
+      <div id="resetError" class="error"></div>
+    </form>
+
+    <div class="toggle" id="toggleText">Não tem conta? Criar agora</div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const resetForm = document.getElementById("resetForm");
+    const toggleText = document.getElementById("toggleText");
+    const forgotPassword = document.getElementById("forgotPassword");
+
+    const loginError = document.getElementById("loginError");
+    const registerError = document.getElementById("registerError");
+    const resetError = document.getElementById("resetError");
+
+    // Alternar entre login e registro
+    toggleText.addEventListener("click", () => {
+      if (loginForm.style.display === "none") {
+        loginForm.style.display = "block";
+        registerForm.style.display = "none";
+        resetForm.style.display = "none";
+        toggleText.textContent = "Não tem conta? Criar agora";
+      } else {
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+        resetForm.style.display = "none";
+        toggleText.textContent = "Já tem conta? Entrar";
+      }
+      loginError.textContent = "";
+      registerError.textContent = "";
+      resetError.textContent = "";
+    });
+
+    // Abrir "Esqueci minha senha"
+    forgotPassword.addEventListener("click", () => {
+      loginForm.style.display = "none";
+      registerForm.style.display = "none";
+      resetForm.style.display = "block";
+      toggleText.style.display = "none"; // esconde alternância
+    });
+
+    // Registro de novo usuário
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const user = document.getElementById("regUser").value;
+      const email = document.getElementById("regEmail").value;
+      const pass = document.getElementById("regPass").value;
+      const confirm = document.getElementById("regConfirm").value;
+
+      if (pass.length < 6) {
+        registerError.textContent = "A senha deve ter no mínimo 6 caracteres.";
+        return;
+      }
+      if (pass !== confirm) {
+        registerError.textContent = "As senhas não coincidem.";
+        return;
+      }
+
+      localStorage.setItem("user", user);
+      localStorage.setItem("email", email);
+      localStorage.setItem("pass", pass);
+
+      registerError.textContent = "";
+      alert("Conta criada com sucesso!");
+      loginForm.style.display = "block";
+      registerForm.style.display = "none";
+      toggleText.textContent = "Não tem conta? Criar agora";
+    });
+
+    // Login
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const user = document.getElementById("loginUser").value;
+      const pass = document.getElementById("loginPass").value;
+
+      const savedUser = localStorage.getItem("user");
+      const savedPass = localStorage.getItem("pass");
+
+      if (user !== savedUser) {
+        loginError.textContent = "Usuário incorreto!";
+        return;
+      }
+      if (pass !== savedPass) {
+        loginError.textContent = "Senha incorreta!";
+        return;
+      }
+
+      loginError.textContent = "";
+      alert("Login realizado com sucesso!");
+      window.location.href = "index.html";
+    });
+
+    // Redefinir Senha
+    resetForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const user = document.getElementById("resetUser").value;
+      const email = document.getElementById("resetEmail").value;
+      const newPass = document.getElementById("newPass").value;
+      const confirmNewPass = document.getElementById("confirmNewPass").value;
+
+      const savedUser = localStorage.getItem("user");
+      const savedEmail = localStorage.getItem("email");
+
+      if (user !== savedUser || email !== savedEmail) {
+        resetError.textContent = "Usuário ou email não conferem!";
+        return;
+      }
+
+      const specialChar = /[!@#$%^&*(),.?":{}|<>]/;
+      if (newPass.length < 6 || !specialChar.test(newPass)) {
+        resetError.textContent = "A senha deve ter no mínimo 6 caracteres e 1 caractere especial.";
+        return;
+      }
+      if (newPass !== confirmNewPass) {
+        resetError.textContent = "As senhas não coincidem.";
+        return;
+      }
+
+      localStorage.setItem("pass", newPass);
+
+      resetError.textContent = "";
+      alert("Senha redefinida com sucesso!");
+      loginForm.style.display = "block";
+      resetForm.style.display = "none";
+      toggleText.style.display = "block";
+    });
+
+    // Mostrar/ocultar senha
+    const togglePassword = document.getElementById("togglePassword");
+    const loginPass = document.getElementById("loginPass");
+    togglePassword.addEventListener("click", () => {
+      const type = loginPass.getAttribute("type") === "password" ? "text" : "password";
+      loginPass.setAttribute("type", type);
+      togglePassword.classList.toggle("fa-eye-slash");
+    });
+  </script>
+</body>
+</html>

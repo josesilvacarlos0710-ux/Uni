@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RyzenTech - Conformidade (LGPD & Compliance)</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { background: url("imag/gold34.jpg") center/cover fixed no-repeat; }
+    .overlay { background: rgba(0,0,0,0.66); min-height: 100vh; }
+    .sidebar { width: 4.5rem; transition: width .3s ease; }
+    .sidebar:hover { width: 16rem; }
+    .sidebar .text-label { opacity: 0; white-space: nowrap; transition: opacity .3s ease; }
+    .sidebar:hover .text-label { opacity: 1; }
+    .law-box { max-height: 260px; overflow:auto; white-space:pre-wrap; }
+  </style>
+</head>
+<body class="text-white">
+  <div class="overlay flex">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-black/50 backdrop-blur-md shadow-xl flex flex-col p-4 items-center">
+      <div class="flex flex-col items-center mb-8">
+        <img src="Imag/drag logo.png" alt="Logo" class="w-12 h-12 mb-2 rounded-full border-2 border-gray-400 shadow-lg">
+        <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent">G.F</h1>
+        <span class="text-xs text-gray-400 text-label">Grupo Faberge</span>
+      </div>
+      <nav class="flex flex-col gap-3 w-full">
+        <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="home" class="w-5 h-5"></i><span class="text-label">Home</span>
+        </a>
+        <a href="checklist.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="cpu" class="w-5 h-5"></i><span class="text-label">Cad. Equipamentos</span>
+        </a>
+        <a href="Usuario.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="users" class="w-5 h-5"></i><span class="text-label">Usuários</span>
+        </a>
+        <a href="teste.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="check-circle" class="w-5 h-5"></i><span class="text-label">Teste/Conformidade</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-600/40 transition">
+          <i data-lucide="log-out" class="w-5 h-5"></i><span class="text-label">Sair</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-1 p-8 max-w-4xl mx-auto">
+      <h1 class="text-3xl font-extrabold mb-4 bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent drop-shadow-lg">
+        Conformidade — LGPD & Compliance
+      </h1>
+
+      <p class="text-gray-300 mb-4">
+        Antes de marcar qualquer equipamento como <strong>Conforme</strong>, é necessário certificar que as obrigações da LGPD e as políticas de compliance foram verificadas.
+        Preencha os itens abaixo e clique em <strong>Certificar</strong>.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- box com o texto da Lei -->
+        <div class="bg-slate-900/60 rounded-xl p-5 shadow-lg law-box">
+          <h2 class="font-semibold text-emerald-300 mb-2">Lei Geral de Proteção de Dados (LGPD) — Resumo</h2>
+          <div class="text-sm text-gray-300 space-y-2">
+            <p><strong>Artigos relevantes (resumo):</strong></p>
+            <p>• Tratamento de dados pessoais deve observar finalidade, necessidade e transparência.</p>
+            <p>• Consentimento: quando necessário, deve ser livre, informado e inequívoco.</p>
+            <p>• Direitos do titular: acesso, correção, eliminação, portabilidade, revogação do consentimento.</p>
+            <p>• Segurança e boas práticas: adoção de medidas técnicas e administrativas para proteger dados.</p>
+            <p>• Responsabilização: empresa responde por incidentes e deve comunicar autoridades em caso de vazamento.</p>
+          </div>
+        </div>
+
+        <!-- box checklist -->
+        <div class="bg-slate-900/60 rounded-xl p-5 shadow-lg">
+          <h2 class="font-semibold text-emerald-300 mb-3">Checklist para Certificação</h2>
+
+          <div class="space-y-3 text-gray-200 mb-4">
+            <label class="flex items-start gap-3">
+              <input id="lgpdAccept" type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-semibold">LGPD — Consentimento e Tratamento</div>
+                <div class="text-sm text-gray-400">Dados pessoais tratados conforme a finalidade.</div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3">
+              <input id="policyAccess" type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-semibold">Acesso controlado</div>
+                <div class="text-sm text-gray-400">Acesso restrito e documentado.</div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3">
+              <input id="malwarescan" type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-semibold">Antivírus / Scan</div>
+                <div class="text-sm text-gray-400">Varredura concluída, sem ameaças críticas.</div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3">
+              <input id="updates" type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-semibold">Atualizações</div>
+                <div class="text-sm text-gray-400">Sistema e aplicações críticas atualizadas.</div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3">
+              <input id="backup" type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-semibold">Backup</div>
+                <div class="text-sm text-gray-400">Procedimento de backup definido e testado.</div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Info da máquina -->
+          <div id="machineInfo" class="text-gray-300 text-sm mb-4"></div>
+
+          <div class="flex gap-3">
+            <button id="btnCertify" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow">Certificar</button>
+            <button id="btnCancel" class="px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg shadow">Cancelar</button>
+          </div>
+
+          <p id="msg" class="mt-3 text-sm"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+  <script>
+    lucide.createIcons();
+
+    function showToast(message, type="success") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `px-4 py-2 rounded-lg shadow-lg text-white flex items-center gap-2 animate-fadeIn ${
+        type==="success" ? "bg-green-600" : "bg-red-600"
+      }`;
+      toast.innerHTML = `<i data-lucide="${type==="success" ? "check-circle" : "x-circle"}" class="w-5 h-5"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons({ icons: [toast.querySelector("i")] });
+      setTimeout(()=>{ toast.classList.add("opacity-0"); setTimeout(()=>toast.remove(),500); },2000);
+    }
+
+    function lerPendencia() {
+      try {
+        const pending = localStorage.getItem("pendingConformidade");
+        if (pending) {
+          localStorage.removeItem("pendingConformidade");
+          return JSON.parse(pending);
+        }
+      } catch(e){}
+      return null;
+    }
+
+    const infoBox = document.getElementById("machineInfo");
+    const pend = lerPendencia();
+    if (pend) {
+      infoBox.innerHTML = `<strong>Máquina:</strong> Série <span class="font-semibold">${pend.serie}</span><br/>
+                           <strong>Titular (CPF):</strong> <span class="font-semibold">${pend.cpf}</span>`;
+    } else {
+      infoBox.innerHTML = `<span class="text-gray-400">Nenhuma máquina selecionada.</span>`;
+    }
+
+    document.getElementById("btnCancel").addEventListener("click", () => {
+      window.location.href = "teste.html";
+    });
+
+    document.getElementById("btnCertify").addEventListener("click", () => {
+      const lgpd = document.getElementById("lgpdAccept").checked;
+      const access = document.getElementById("policyAccess").checked;
+      const mal = document.getElementById("malwarescan").checked;
+      const up = document.getElementById("updates").checked;
+      const bk = document.getElementById("backup").checked;
+      const msg = document.getElementById("msg");
+      msg.textContent = "";
+
+      if (!pend) {
+        msg.textContent = "Nenhuma máquina foi informada.";
+        msg.className = "text-sm text-red-400 mt-2";
+        return;
+      }
+      if (!lgpd) {
+        msg.textContent = "É obrigatório aceitar os requisitos da LGPD.";
+        msg.className = "text-sm text-red-400 mt-2";
+        return;
+      }
+      const passedChecks = [access,mal,up,bk].filter(Boolean).length;
+      if (passedChecks < 2) {
+        msg.textContent = "Realize pelo menos 2 verificações de compliance.";
+        msg.className = "text-sm text-red-400 mt-2";
+        return;
+      }
+
+      // ✅ Salva diretamente em testes como OK
+      let testes = JSON.parse(localStorage.getItem("testes")) || [];
+      const idx = testes.findIndex(t => t.cpf===pend.cpf && t.serie===pend.serie);
+      if(idx>=0){
+        testes[idx].conforme = "OK";
+      } else {
+        testes.push({cpf: pend.cpf, serie: pend.serie, conforme: "OK"});
+      }
+      localStorage.setItem("testes", JSON.stringify(testes));
+
+      // Apenas para sinalizar retorno
+      localStorage.setItem("justCertified", JSON.stringify({ cpf: pend.cpf, serie: pend.serie }));
+
+      // toast e redireciona
+      showToast("Certificação concluída com sucesso!", "success");
+      setTimeout(()=> window.location.href="teste.html", 1200);
+    });
+  </script>
+
+  <style>
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(-10px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+    .animate-fadeIn{animation:fadeIn .3s ease-out;}
+  </style>
+</body>
+</html>

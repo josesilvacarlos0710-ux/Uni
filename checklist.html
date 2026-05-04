@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RyzenTech - Cadastro de Equipamentos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    body { background: url("imag/gold34.jpg") center/cover fixed no-repeat; }
+    .overlay { background: rgba(0, 0, 0, 0.65); min-height: 100vh; }
+    .sidebar { width: 4.5rem; transition: width .3s ease; }
+    .sidebar:hover { width: 16rem; }
+    .sidebar .nav-text { opacity: 0; transition: opacity .3s ease; white-space: nowrap; }
+    .sidebar:hover .nav-text { opacity: 1; }
+    .is-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,.12); }
+  </style>
+</head>
+<body class="text-white">
+  <div class="overlay flex">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-black/50 backdrop-blur-md shadow-xl flex flex-col p-4 items-center">
+      <div class="flex flex-col items-center mb-8">
+        <img src="imag/drag logo.png" alt="Logo" class="w-12 h-12 mb-2 rounded-full border-2 border-gray-400 shadow-lg">
+        <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent">G.F</h1>
+        <span class="text-xs text-gray-400 nav-text">Grupo Faberge</span>
+      </div>
+      <nav class="flex flex-col gap-3 w-full">
+        <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="home" class="w-5 h-5"></i><span class="nav-text">Home</span>
+        </a>
+        <a href="checklist.html" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-700/60 shadow-md">
+          <i data-lucide="cpu" class="w-5 h-5"></i><span class="nav-text">Cadastro de Equip.</span>
+        </a>
+        <a href="Usuario.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="users" class="w-5 h-5"></i><span class="nav-text">Usuários</span>
+        </a>
+        <a href="teste.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="check-circle" class="w-5 h-5"></i><span class="nav-text">Teste/Conformidade</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-600/40 transition">
+          <i data-lucide="log-out" class="w-5 h-5"></i><span class="nav-text">Sair</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-1 max-w-4xl mx-auto p-8">
+      <h1 class="text-3xl font-extrabold mb-6 bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent drop-shadow-lg">
+        Cadastro de Equipamento e Usuário
+      </h1>
+
+      <!-- QR Code -->
+      <div class="mb-6 bg-slate-900/60 p-5 rounded-xl shadow-lg flex items-center gap-4">
+        <div>
+          <p class="font-semibold">Acesse este sistema pelo celular:</p>
+          <div id="qrcodePage"></div>
+        </div>
+      </div>
+
+      <!-- Formulário -->
+      <div class="bg-slate-900/60 p-6 rounded-xl shadow-lg space-y-4">
+        <!-- Usuário -->
+        <h3 class="font-semibold mb-2 text-emerald-300">Usuário</h3>
+        <input id="cliNome" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2" placeholder="Nome completo" />
+        <input id="cliCPF" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2" placeholder="CPF (000.000.000-00)" />
+        <input id="cliEmail" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2" placeholder="E-mail" />
+        <input id="cliTel" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2 mb-4" placeholder="Telefone" />
+
+        <!-- Equipamento -->
+        <h3 class="font-semibold mb-2 text-emerald-300">Equipamento</h3>
+        <input id="maqModelo" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2" placeholder="Modelo do PC/Notebook" />
+        <input id="maqSerie" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2" placeholder="Número de série / Patrimônio" />
+        <textarea id="maqObs" class="w-full border border-slate-700 bg-slate-800/70 rounded-lg px-3 py-2 mb-4" placeholder="Observações sobre o equipamento"></textarea>
+
+        <!-- Upload de foto -->
+        <div>
+          <label class="block mb-2 font-semibold text-emerald-300">Foto do equipamento</label>
+          <input type="file" id="maqFoto" accept="image/*"
+            class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                   file:rounded-lg file:border-0 file:font-semibold
+                   file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 transition">
+          <img id="previewFoto" class="hidden mt-3 w-40 h-40 object-cover rounded-lg border border-slate-600 shadow-md" />
+        </div>
+
+        <!-- Botões -->
+        <div class="flex gap-3 mt-4">
+          <button id="saveCl" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition">Salvar</button>
+          <button id="updateCl" class="hidden px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">Atualizar</button>
+          <button id="resetCl" class="px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg transition">Limpar</button>
+        </div>
+      </div>
+
+      <!-- Lista -->
+      <section class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Cadastros Salvos</h2>
+        <div id="clList" class="space-y-4"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Notificação -->
+  <div id="notif" class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg hidden">
+    Cadastro salvo com sucesso!
+  </div>
+
+  <!-- Script original -->
+  <script>
+    /* --- Manteve toda a lógica original, apenas reorganizado --- */
+    const paginaURL = window.location.href;
+    let editIndex = null;
+
+    QRCode.toCanvas(document.getElementById("qrcodePage"), paginaURL, { width: 120 });
+
+    function maskCPF(v){return v.replace(/\D/g,"").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");}
+    function maskTelefone(v){v=v.replace(/\D/g,"");if(v.length>10)v=v.replace(/^(\d{2})(\d{5})(\d{4}).*/,"($1) $2-$3");else v=v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/,"($1) $2-$3");return v;}
+    function emailValido(e){return /\S+@\S+\.\S+/.test(e);}
+    function listar(){return JSON.parse(localStorage.getItem("cadastros"))||[];}
+    function salvar(d){const arr=listar();arr.push(d);localStorage.setItem("cadastros",JSON.stringify(arr));}
+    function atualizar(i,d){const arr=listar();arr[i]=d;localStorage.setItem("cadastros",JSON.stringify(arr));}
+    function excluir(i){const arr=listar();arr.splice(i,1);localStorage.setItem("cadastros",JSON.stringify(arr));}
+
+    function mostrarNotificacao(msg, cor="bg-emerald-600") {
+      const box = document.getElementById("notif");
+      box.textContent = msg;
+      box.className = `fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg ${cor}`;
+      box.classList.remove("hidden");
+      setTimeout(()=> box.classList.add("hidden"), 3000);
+    }
+
+    document.getElementById("maqFoto").addEventListener("change", e=>{
+      const file=e.target.files[0];if(!file)return;
+      const r=new FileReader();
+      r.onload=ev=>{const img=document.getElementById("previewFoto");img.src=ev.target.result;img.classList.remove("hidden");};
+      r.readAsDataURL(file);
+    });
+
+    document.getElementById("cliCPF").addEventListener("input",e=>e.target.value=maskCPF(e.target.value));
+    document.getElementById("cliTel").addEventListener("input",e=>e.target.value=maskTelefone(e.target.value));
+
+    function resetForm(){
+      document.querySelectorAll("input,textarea").forEach(el=>{if(el.type!=="file")el.value="";});
+      document.getElementById("previewFoto").classList.add("hidden");
+      document.getElementById("saveCl").classList.remove("hidden");
+      document.getElementById("updateCl").classList.add("hidden");
+      editIndex=null;
+    }
+
+    function render(){
+      const list=document.getElementById("clList");
+      list.innerHTML="";
+      listar().forEach((c,i)=>{
+        const div=document.createElement("div");
+        div.className="p-4 border border-slate-700 rounded-lg bg-slate-900/70 flex justify-between items-center shadow";
+        div.innerHTML=`
+          <div>
+            <p><strong>${c.usuario.nome}</strong> (${c.usuario.cpf})</p>
+            <p>${c.equip.modelo} - Série: ${c.equip.serie}</p>
+            <p class="text-sm text-gray-400">${c.usuario.email} | ${c.usuario.tel}</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg transition" onclick="editar(${i})">Editar</button>
+            <button class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-lg transition" onclick="excluirCadastro(${i})">Excluir</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById("saveCl").addEventListener("click",()=>{
+      const usuario={nome:cliNome.value.trim(),cpf:cliCPF.value.trim(),email:cliEmail.value.trim(),tel:cliTel.value.trim()};
+      const equip={modelo:maqModelo.value.trim(),serie:maqSerie.value.trim(),obs:maqObs.value.trim(),foto:previewFoto.src||""};
+      if(!usuario.nome||!emailValido(usuario.email)){alert("Preencha os dados corretamente.");return;}
+      salvar({usuario,equip});
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      if (!usuarios.find(u => u.cpf === usuario.cpf)) { usuarios.push(usuario); } else { usuarios = usuarios.map(u => u.cpf === usuario.cpf ? usuario : u); }
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      mostrarNotificacao("Cadastro salvo com sucesso!");
+      render();resetForm();
+    });
+
+    window.editar=i=>{
+      const c=listar()[i];if(!c)return;
+      cliNome.value=c.usuario.nome;cliCPF.value=c.usuario.cpf;cliEmail.value=c.usuario.email;cliTel.value=c.usuario.tel;
+      maqModelo.value=c.equip.modelo;maqSerie.value=c.equip.serie;maqObs.value=c.equip.obs;
+      if(c.equip.foto){previewFoto.src=c.equip.foto;previewFoto.classList.remove("hidden");}
+      saveCl.classList.add("hidden");updateCl.classList.remove("hidden");editIndex=i;
+    };
+
+    document.getElementById("updateCl").addEventListener("click",()=>{
+      if(editIndex===null)return;
+      const usuario={nome:cliNome.value,cpf:cliCPF.value,email:cliEmail.value,tel:cliTel.value};
+      const equip={modelo:maqModelo.value,serie:maqSerie.value,obs:maqObs.value,foto:previewFoto.src||""};
+      atualizar(editIndex,{usuario,equip});
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      if (!usuarios.find(u => u.cpf === usuario.cpf)) { usuarios.push(usuario); } else { usuarios = usuarios.map(u => u.cpf === usuario.cpf ? usuario : u); }
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      mostrarNotificacao("Cadastro atualizado com sucesso!");
+      render();resetForm();
+    });
+
+    window.excluirCadastro=i=>{if(confirm("Excluir cadastro?")){excluir(i);render();}};
+
+    render();
+    lucide.createIcons();
+    resetCl.addEventListener("click",resetForm);
+  </script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Governança de TI Interativa — Plataforma Avançada</title>
+  <style>
+    /* --- Reset e tipografia --- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg,#0f1724 0%,#0b1220 50%);
+      color:#0b1220;
+      padding:20px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .app {
+      max-width:1200px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(2,6,23,0.6);
+    }
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #eef2f6;background:linear-gradient(90deg,#ffffff,#fbfdff)}
+    .brand{display:flex;gap:14px;align-items:center}
+    .brand img{width:56px;height:40px;object-fit:cover;border-radius:8px;box-shadow:0 6px 18px rgba(11,18,32,0.08)}
+    h1{font-size:18px;color:#081029;margin:0}
+    p.sub{margin:0;color:#56666f;font-size:13px}
+    .controls{display:flex;gap:10px;align-items:center}
+
+    .btn{background:#0b1220;color:#fff;padding:9px 14px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+    .btn.secondary{background:transparent;color:#0b1220;border:1px solid rgba(11,18,32,0.06)}
+    .btn.ghost{background:transparent;border:none;color:#44525b}
+    .small{font-size:13px;color:#6b7980}
+
+    main{display:grid;grid-template-columns:320px 1fr;gap:18px;padding:18px}
+    @media (max-width:1000px){main{grid-template-columns:1fr}}
+
+    /* left column */
+    .sidebar{padding:14px;border-right:1px solid #eef2f6;min-height:520px;background:#fbfdff}
+    .media{border-radius:8px;overflow:hidden;height:140px;background:#e9eef3;margin-bottom:12px}
+    .media img{width:100%;height:100%;object-fit:cover;display:block}
+    .plate{position:relative;left:14px;bottom:18px;background:#081029;color:#fff;padding:6px 10px;border-radius:6px;font-weight:700;font-size:13px;margin-top:-40px;display:inline-block}
+    .stat{display:flex;justify-content:space-between;padding:10px;border-radius:8px;background:#fff;border:1px solid #edf2f7;margin-bottom:8px}
+    .stat strong{color:#081029}
+
+    .sidebar .group{margin-top:12px}
+    label.switch{display:flex;gap:8px;align-items:center;cursor:pointer}
+    .input-inline{display:flex;gap:8px;align-items:center}
+
+    /* right column */
+    .workspace{padding:12px}
+    .card{background:#fff;border-radius:10px;padding:14px;border:1px solid #edf2f7;margin-bottom:12px}
+    .meta-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .question{font-weight:700;font-size:18px;color:#081029}
+    .hint{font-size:13px;color:#5b6b78;margin-top:6px}
+    .answers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    @media (max-width:800px){.answers{grid-template-columns:1fr}}
+
+    .answer{padding:12px;border-radius:8px;border:1px solid #eef2f7;background:#fbfdff;cursor:pointer;transition:transform .08s,box-shadow .12s}
+    .answer:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(11,18,32,0.06)}
+    .answer.correct{border-color:#1aa66b;background:linear-gradient(90deg, rgba(26,166,107,0.06), #f6fbf8)}
+    .answer.wrong{border-color:#d9534f;background:linear-gradient(90deg, rgba(217,83,79,0.04), #fff8f8)}
+    .answer:focus{outline:3px solid rgba(25,103,210,0.14)}
+
+    .toolbar{display:flex;gap:8px;align-items:center;margin-top:12px}
+    .right-actions{display:flex;gap:8px;align-items:center}
+
+    /* CMS area */
+    .cms-row{display:flex;gap:12px}
+    .cms-row textarea{width:100%;min-height:64px;padding:8px;border-radius:6px;border:1px solid #eef2f7}
+    .cms-row input[type="text"]{width:100%;padding:8px;border-radius:6px;border:1px solid #eef2f7}
+
+    /* analytics */
+    .chart{width:100%;height:220px;background:linear-gradient(180deg,#fbfdff,#f6f8fa);border-radius:8px;border:1px solid #edf2f7;padding:8px}
+    .kpi{display:flex;gap:12px}
+    .kpi .item{flex:1;padding:10px;background:#fff;border-radius:8px;border:1px solid #edf2f7}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;z-index:80}
+    .modal-backdrop.show{display:flex}
+    .modal{background:#fff;border-radius:10px;padding:16px;max-width:920px;width:96%;box-shadow:0 20px 60px rgba(2,6,23,0.6)}
+    .modal h3{margin-bottom:8px}
+    .modal .row{display:flex;justify-content:space-between;padding:10px;border-radius:8px;background:#fbfdff;margin-top:8px}
+    .tag{display:inline-block;padding:6px 8px;border-radius:6px;background:#eef6ff;font-weight:600;color:#1967d2;margin-right:8px}
+
+    /* footer */
+    footer{padding:12px 18px;border-top:1px solid #eef2f6;background:#fbfdff;display:flex;align-items:center;justify-content:space-between}
+
+    /* accessibility focus */
+    :focus-visible{outline:3px solid rgba(25,103,210,0.16);outline-offset:2px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Plataforma de Governança de TI Interativa Avançada">
+    <header>
+      <div class="brand">
+        <img src="https://cdn.pixabay.com/photo/2017/03/27/14/56/ford-mustang-2179220_1280.jpg" alt="logo">
+        <div>
+          <h1>Governança de TI Interativa</h1>
+          <p class="sub">Ambiente de avaliação, CMS, analytics e relatórios</p>
+        </div>
+      </div>
+
+      <div class="controls" role="toolbar" aria-label="Controles principais">
+        <div class="small">Usuário: <strong id="u_name">Avaliador</strong></div>
+        <select id="roleSelect" aria-label="Selecionar função">
+          <option value="evaluator">Avaliador</option>
+          <option value="participant">Participante</option>
+          <option value="observer">Observador</option>
+        </select>
+        <button class="btn" id="startBtn">Iniciar Sessão</button>
+        <button class="btn secondary" id="saveState">Salvar Sessão</button>
+        <button class="btn ghost" id="importBtn">Importar CSV</button>
+        <button class="btn ghost" id="exportBtn">Exportar CSV</button>
+        <button class="btn secondary" id="printReport">Imprimir Relatório</button>
+        <select id="lang" aria-label="Idioma">
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar" aria-label="Painel lateral">
+        <div class="media" aria-hidden="false"><img src="https://cdn.pixabay.com/photo/2017/03/27/14/56/ford-mustang-2179220_1280.jpg" alt="imagem representativa"></div>
+        <div class="plate" aria-hidden="false">Grupo Fabergé</div>
+
+        <div class="group" aria-live="polite">
+          <div class="stat"><span class="small">Perguntas</span><strong id="totalQ">0</strong></div>
+          <div class="stat"><span class="small">Respondidas</span><strong id="answered">0</strong></div>
+          <div class="stat"><span class="small">Pontos</span><strong id="points">0</strong></div>
+        </div>
+
+        <div class="group">
+          <div class="small" style="margin-bottom:8px">Controles</div>
+          <div class="input-inline">
+            <label class="switch"><input type="checkbox" id="mute"> Som</label>
+            <label class="switch"><input type="checkbox" id="timedMode"> Cronometrado</label>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn secondary" id="skip">Pular</button>
+            <button class="btn secondary" id="hint">Dica</button>
+            <button class="btn secondary" id="reveal">Revelar</button>
+          </div>
+          <div style="margin-top:10px">
+            <div class="small">Sessão Multijogador (local)</div>
+            <input id="playersInput" type="text" placeholder="Nomes separados por vírgula" style="width:100%;padding:8px;border-radius:6px;border:1px solid #eef2f7;margin-top:6px">
+            <button class="btn" id="startMulti" style="margin-top:8px">Criar Sessão</button>
+          </div>
+        </div>
+
+        <div class="group" style="margin-top:12px">
+          <div class="small">CMS Rápido</div>
+          <div style="margin-top:8px">
+            <input id="qTxt" type="text" placeholder="Enunciado da pergunta" style="padding:8px;border-radius:6px;border:1px solid #eef2f7;width:100%;margin-bottom:6px">
+            <textarea id="optsTxt" placeholder="Alternativas separadas por '|', marque correta com [*] ex: Verde|Amarelo|[*]Vermelho" style="padding:8px;border-radius:6px;border:1px solid #eef2f7;width:100%"></textarea>
+            <input id="hintTxt" type="text" placeholder="Dica (opcional)" style="padding:8px;border-radius:6px;border:1px solid #eef2f7;width:100%;margin-top:6px">
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="addQ">Adicionar Pergunta</button>
+              <button class="btn secondary" id="openEditor">Gerenciar Qs (CMS)</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="workspace" aria-live="polite">
+        <div class="card">
+          <div class="meta-row">
+            <div>
+              <div class="small" id="qIndex">0 / 0</div>
+              <div class="question" id="question">Clique em Iniciar Sessão</div>
+              <div class="hint" id="hintArea"></div>
+            </div>
+            <div style="text-align:right">
+              <div class="small">Tempo</div>
+              <div class="small" id="timer">--</div>
+            </div>
+          </div>
+
+          <div class="answers" id="answers"></div>
+
+          <div class="toolbar">
+            <div class="small-muted" id="feedback">Aguardando ação</div>
+            <div class="right-actions" style="margin-left:auto">
+              <button class="btn secondary" id="nextBtn" style="display:none">Próxima</button>
+              <button class="btn secondary" id="endBtn">Encerrar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="small">Analytics Rápido</div>
+            <div><button class="btn ghost" id="refreshAnalytics">Atualizar</button></div>
+          </div>
+          <div style="margin-top:8px" class="kpi">
+            <div class="item" style="padding:10px;border-radius:8px">
+              <div class="small">Taxa de Acerto</div>
+              <div><strong id="kpiAccuracy">0%</strong></div>
+            </div>
+            <div class="item" style="padding:10px;border-radius:8px">
+              <div class="small">Tempo Médio</div>
+              <div><strong id="kpiTime">--s</strong></div>
+            </div>
+            <div class="item" style="padding:10px;border-radius:8px">
+              <div class="small">Top Problemas</div>
+              <div><strong id="kpiHard">—</strong></div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="chart" aria-hidden="false">
+            <canvas id="chart" width="800" height="220" style="width:100%;height:220px"></canvas>
+          </div>
+        </div>
+
+        <div class="card" id="discussionCard">
+          <div class="small">Marcados para Discussão</div>
+          <div id="discussList" style="margin-top:8px"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="small">Pronto para avaliação — local</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="small">Tema:</div>
+        <select id="theme" aria-label="Tema">
+          <option value="default">Profissional</option>
+          <option value="dark">Escuro</option>
+          <option value="print">Impressão</option>
+        </select>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal CMS / Editor / Resultado -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="modalContent">
+      <h3 id="modalTitle">Editor de Perguntas</h3>
+      <div id="cmsList" style="max-height:360px;overflow:auto"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button class="btn secondary" id="closeModal">Fechar</button>
+        <button class="btn" id="exportAll">Exportar JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Áudio -->
+  <audio id="s_ok" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c1e7e3e3e.mp3?filename=correct-answer-1-100639.mp3"></audio>
+  <audio id="s_fail" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7c1e7e3e3e.mp3?filename=wrong-answer-1-100640.mp3"></audio>
+  <audio id="s_click" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c1e7e3e3e.mp3?filename=click-124467.mp3"></audio>
+
+  <input id="fileInput" type="file" accept=".csv,.json" style="display:none" />
+
+  <script>
+    /* ============================
+       Estado e dados iniciais
+       ============================ */
+    const initialBank = [
+      {id:1, pergunta: "Sistema caiu sem plano de recuperação", respostas: ["Gerenciar Incidente","Acionar DRP e testar recuperação","Ignorar","Documentar e analisar causa"], correta: "Acionar DRP e testar recuperação", dica:"Priorize continuidade e testes"},
+      {id:2, pergunta: "Usuário acessou dados financeiros sem autorização", respostas: ["Validar Acesso","Registrar e monitorar","Revogar acesso e notificar segurança","Deixar como está"], correta: "Revogar acesso e notificar segurança", dica:"Proteja dados sensíveis"},
+      {id:3, pergunta: "Fornecedor sem cláusula de ética", respostas: ["Aplicar Política de Ética","Aprovar direto","Negociar inclusão de cláusula","Acompanhar desempenho"], correta: "Negociar inclusão de cláusula", dica:"Mitigue riscos contratuais"},
+      {id:4, pergunta: "Backup automático semanal ativo", respostas: ["Verde","Amarelo","Vermelho","Testar restauração mensal"], correta: "Testar restauração mensal", dica:"Backups devem ser restauráveis"},
+      {id:5, pergunta: "Terceiro contratado sem verificação de antecedentes", respostas: ["Aplicar Política de Terceiros","Ignorar","Suspender contratação até verificação","Monitorar temporariamente"], correta: "Suspender contratação até verificação", dica:"Verificações reduzem exposição"}
+    ];
+
+    let banco = JSON.parse(JSON.stringify(initialBank));
+    let state = {
+      index:0, points:0, answered:0, startAt:null, responses:[], sessionPlayers:[], currentPlayerIdx:0
+    };
+
+    /* ============================
+       Elementos
+       ============================ */
+    const totalQEl = document.getElementById('totalQ');
+    const answeredEl = document.getElementById('answered');
+    const pointsEl = document.getElementById('points');
+    const qIndexEl = document.getElementById('qIndex');
+    const questionEl = document.getElementById('question');
+    const hintEl = document.getElementById('hintArea');
+    const answersEl = document.getElementById('answers');
+    const feedbackEl = document.getElementById('feedback');
+    const timerEl = document.getElementById('timer');
+    const chartCanvas = document.getElementById('chart');
+
+    const startBtn = document.getElementById('startBtn');
+    const addQBtn = document.getElementById('addQ');
+    const openEditorBtn = document.getElementById('openEditor');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+    const cmsList = document.getElementById('cmsList');
+    const exportAllBtn = document.getElementById('exportAll');
+
+    const skipBtn = document.getElementById('skip');
+    const hintBtn = document.getElementById('hint');
+    const revealBtn = document.getElementById('reveal');
+    const nextBtn = document.getElementById('nextBtn');
+    const endBtn = document.getElementById('endBtn');
+    const timedToggle = document.getElementById('timedMode');
+    const muteToggle = document.getElementById('mute');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const fileInput = document.getElementById('fileInput');
+    const playersInput = document.getElementById('playersInput');
+    const startMultiBtn = document.getElementById('startMulti');
+    const discussList = document.getElementById('discussList');
+
+    const kpiAccuracy = document.getElementById('kpiAccuracy');
+    const kpiTime = document.getElementById('kpiTime');
+    const kpiHard = document.getElementById('kpiHard');
+    const refreshAnalyticsBtn = document.getElementById('refreshAnalytics');
+
+    const qTxt = document.getElementById('qTxt');
+    const optsTxt = document.getElementById('optsTxt');
+    const hintTxt = document.getElementById('hintTxt');
+    const themeSelect = document.getElementById('theme');
+    const langSelect = document.getElementById('lang');
+    const roleSelect = document.getElementById('roleSelect');
+    const uNameEl = document.getElementById('u_name');
+    const saveStateBtn = document.getElementById('saveState');
+    const printReportBtn = document.getElementById('printReport');
+
+    const audioOk = document.getElementById('s_ok');
+    const audioFail = document.getElementById('s_fail');
+    const audioClick = document.getElementById('s_click');
+
+    /* ============================
+       Utilitários gerais
+       ============================ */
+    function playAudio(el){
+      if(muteToggle.checked) return;
+      try{ el.currentTime = 0; el.play(); }catch(e){}
+    }
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a }
+
+    function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7) }
+
+    /* ============================
+       Inicialização e render
+       ============================ */
+    function refreshUI(){
+      totalQEl.textContent = banco.length;
+      answeredEl.textContent = state.answered;
+      pointsEl.textContent = state.points;
+      qIndexEl.textContent = `${Math.min(state.index+1, banco.length)} / ${banco.length}`;
+    }
+
+    function renderQuestion(){
+      if(state.index >= banco.length){
+        endSession();
+        return;
+      }
+      const q = banco[state.index];
+      questionEl.textContent = q.pergunta;
+      hintEl.textContent = '';
+      answersEl.innerHTML = '';
+      feedbackEl.textContent = 'Selecione uma alternativa';
+      // shuffle respostas
+      const opts = shuffle([...q.respostas]);
+      opts.forEach((opt, i) => {
+        const b = document.createElement('button');
+        b.className = 'answer';
+        b.tabIndex = 0;
+        b.dataset.text = opt;
+        b.innerHTML = `<div style="font-weight:700">${opt}</div><div style="font-size:12px;color:#64727f;margin-top:6px">Alternativa ${String.fromCharCode(65+i)}</div>`;
+        b.addEventListener('click', () => chooseAnswer(opt, b));
+        b.addEventListener('keydown', (e) => { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); chooseAnswer(opt, b); } });
+        answersEl.appendChild(b);
+      });
+
+      // timer
+      if(timedToggle.checked){
+        startTimer(25);
+      } else {
+        stopTimer();
+        timerEl.textContent = '--';
+      }
+
+      refreshUI();
+    }
+
+    function chooseAnswer(text, btn){
+      // bloquear
+      Array.from(answersEl.children).forEach(c => c.disabled = true);
+      playAudio(audioClick);
+      const q = banco[state.index];
+      state.answered++;
+      const correct = q.correta;
+      state.responses.push({id:q.id, resposta:text, correta:correct, time: getElapsed()});
+      if(text === correct){
+        state.points += 3;
+        feedbackEl.textContent = '✅ Correto. ' + (q.dica ? 'Dica/Contexto: ' + q.dica : '');
+        btn.classList.add('correct');
+        playAudio(audioOk);
+      } else {
+        feedbackEl.textContent = '❌ Incorreto. Resposta correta: ' + correct;
+        btn.classList.add('wrong');
+        // destacar correta
+        Array.from(answersEl.children).forEach(b => { if(b.dataset.text === correct) b.classList.add('correct') });
+        playAudio(audioFail);
+      }
+      state.index++;
+      refreshUI();
+      nextBtn.style.display = 'inline-block';
+      stopTimer();
+    }
+
+    function proceedNext(){
+      nextBtn.style.display = 'none';
+      renderQuestion();
+    }
+
+    /* ============================
+       Timer simples
+       ============================ */
+    let timerInterval=null; let timerStart=null;
+    function startTimer(sec){
+      stopTimer();
+      let t=sec; timerStart = Date.now();
+      timerEl.textContent = t + 's';
+      timerInterval = setInterval(() => {
+        t--; timerEl.textContent = t + 's';
+        if(t<=0){
+          clearInterval(timerInterval); timerInterval=null;
+          feedbackEl.textContent = '⏱ Tempo esgotado. Avançando.';
+          // marcar não respondida
+          state.responses.push({id:banco[state.index].id, resposta:null, correta:banco[state.index].correta, time:sec});
+          state.index++; state.answered++;
+          nextBtn.style.display = 'inline-block';
+        }
+      },1000);
+    }
+    function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null } }
+    function getElapsed(){ if(!timerStart) return null; return Math.round((Date.now() - timerStart)/1000) }
+
+    /* ============================
+       Sessão e relatórios
+       ============================ */
+    function startSession(){
+      state = {index:0, points:0, answered:0, startAt:Date.now(), responses:[], sessionPlayers:state.sessionPlayers || [], currentPlayerIdx:0};
+      renderQuestion();
+      playAudio(audioClick);
+    }
+
+    function endSession(){
+      stopTimer();
+      // analytics e modal resumo simples
+      computeAnalytics();
+      // mostrar resumo no espaço principal
+      questionEl.textContent = 'Sessão encerrada — veja o relatório';
+      hintEl.textContent = '';
+      answersEl.innerHTML = `<div style="padding:16px;background:#fbfdff;border-radius:8px">
+        <div style="font-weight:700">Resumo</div>
+        <div style="margin-top:8px">Perguntas: ${banco.length}</div>
+        <div>Respondidas: ${state.answered}</div>
+        <div>Pontos: ${state.points}</div>
+        <div style="margin-top:8px"><button class="btn" onclick="downloadReport()">Baixar relatório (JSON)</button></div>
+      </div>`;
+      refreshUI();
+    }
+
+    function downloadReport(){
+      const payload = {
+        startedAt: state.startAt,
+        responses: state.responses,
+        points: state.points,
+        players: state.sessionPlayers
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'relatorio_sessao.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    /* ============================
+       CMS: adicionar / editar / remover
+       ============================ */
+    function parseOpts(text){
+      const parts = text.split('|').map(s=>s.trim()).filter(Boolean);
+      // detectar correta marcada com [*]
+      let correta = null;
+      const clean = parts.map(p => {
+        if(p.startsWith('[*]')){ correta = p.replace(/^\[\*\]\s*/,''); return p.replace(/^\[\*\]\s*/,''); }
+        if(p.includes('[*]')){ correta = p.replace('[*]','').trim(); return p.replace('[*]','').trim() }
+        return p;
+      });
+      if(!correta && clean.length) correta = clean[0];
+      return {opts:clean, correta};
+    }
+
+    addQBtn.addEventListener('click', () => {
+      const q = qTxt.value.trim();
+      const opts = optsTxt.value.trim();
+      if(!q || !opts){ alert('Preencha enunciado e alternativas'); return }
+      const parsed = parseOpts(opts);
+      const newQ = {id: uid(), pergunta:q, respostas: parsed.opts, correta: parsed.correta, dica: hintTxt.value.trim() || ''};
+      banco.push(newQ);
+      qTxt.value=''; optsTxt.value=''; hintTxt.value='';
+      refreshUI(); renderQuestion();
+    });
+
+    openEditorBtn.addEventListener('click', () => {
+      modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); renderCMS();
+    });
+    closeModal.addEventListener('click', () => { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true') });
+
+    function renderCMS(){
+      cmsList.innerHTML = '';
+      banco.forEach(q => {
+        const el = document.createElement('div');
+        el.style.padding='10px'; el.style.borderBottom='1px solid #eef2f7';
+        el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="max-width:70%"><strong>${q.pergunta}</strong><div style="font-size:13px;color:#64727f">${q.respostas.join(' | ')}</div></div>
+          <div style="display:flex;gap:8px"><button class="btn secondary" data-id="${q.id}" data-action="edit">Editar</button><button class="btn" data-id="${q.id}" data-action="del">Remover</button></div>
+        </div>`;
+        cmsList.appendChild(el);
+      });
+      // vincular ações
+      cmsList.querySelectorAll('button').forEach(b=>{
+        b.addEventListener('click', (e)=>{
+          const id = b.dataset.id; const action = b.dataset.action;
+          if(action==='del'){ banco = banco.filter(x=>x.id!=id); renderCMS(); refreshUI() }
+          if(action==='edit'){
+            const q = banco.find(x=>x.id==id);
+            const t = prompt('Editar enunciado', q.pergunta);
+            if(t!==null) q.pergunta = t;
+            const o = prompt('Editar alternativas separadas por | (marque correta com [*])', q.respostas.map(r=> r===q.correta?`[*]${r}`:r).join('|'));
+            if(o!==null){ const p = parseOpts(o); q.respostas = p.opts; q.correta = p.correta }
+            renderCMS(); refreshUI();
+          }
+        });
+      });
+    }
+
+    exportAllBtn.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(banco, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='banco_perguntas.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    /* ============================
+       Import / Export CSV
+       ============================ */
+    exportBtn.addEventListener('click', () => {
+      // CSV simples: id,pergunta,alternativas(sep|),correta,dica
+      const header = ['id','pergunta','alternativas','correta','dica'];
+      const rows = banco.map(q=> [q.id, `"${q.pergunta.replace(/"/g,'""')}"`, `"${q.respostas.join('|').replace(/"/g,'""')}"`, `"${q.correta.replace(/"/g,'""')}"`, `"${(q.dica||'').replace(/"/g,'""')}"`].join(','));
+      const csv = [header.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='banco_perguntas.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener('click', ()=> fileInput.click());
+    fileInput.addEventListener('change', (e)=>{
+      const f = e.target.files[0]; if(!f) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const txt = ev.target.result;
+        try{
+          if(f.name.endsWith('.json')) {
+            const parsed = JSON.parse(txt);
+            banco = Array.isArray(parsed)? parsed : banco;
+            alert('Importação JSON concluída');
+          } else {
+            // tentar CSV simples
+            const lines = txt.split(/\r?\n/).filter(Boolean);
+            const arr = [];
+            for(let i=1;i<lines.length;i++){
+              const cols = csvSplit(lines[i]);
+              if(cols.length<5) continue;
+              arr.push({id:cols[0], pergunta: stripQuotes(cols[1]), respostas: stripQuotes(cols[2]).split('|'), correta: stripQuotes(cols[3]), dica: stripQuotes(cols[4])});
+            }
+            if(arr.length) banco = banco.concat(arr);
+            alert('Importação CSV concluída');
+          }
+          refreshUI(); renderQuestion();
+        } catch(ex){
+          alert('Erro na importação: ' + ex.message);
+        }
+      };
+      reader.readAsText(f);
+      e.target.value='';
+    });
+
+    function csvSplit(line){
+      // split simples que considera quotes
+      const out=[]; let curr=''; let inq=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch === '"' ) { inq = !inq; continue; }
+        if(ch === ',' && !inq){ out.push(curr); curr=''; continue; }
+        curr += ch;
+      }
+      out.push(curr);
+      return out;
+    }
+    function stripQuotes(s){ return s.replace(/^"|"$/g,'').replace(/""/g,'"') }
+
+    /* ============================
+       Multiplayer (local turn-based)
+       ============================ */
+    startMultiBtn.addEventListener('click', ()=>{
+      const names = playersInput.value.split(',').map(s=>s.trim()).filter(Boolean);
+      if(!names.length){ alert('Insira ao menos um jogador'); return; }
+      state.sessionPlayers = names;
+      state.currentPlayerIdx = 0;
+      updatePlayerUI();
+      alert('Sessão criada com: ' + names.join(', '));
+    });
+    function updatePlayerUI(){
+      if(state.sessionPlayers.length){
+        uNameEl.textContent = state.sessionPlayers[state.currentPlayerIdx];
+      } else {
+        uNameEl.textContent = roleSelect.value === 'participant' ? 'Participante' : 'Avaliador';
+      }
+    }
+
+    /* ============================
+       Discussões e marcações
+       ============================ */
+    function markForDiscussion(q){
+      if(!window._discuss) window._discuss = [];
+      window._discuss.push({id:q.id, pergunta:q.pergunta});
+      renderDiscussList();
+    }
+    function renderDiscussList(){
+      discussList.innerHTML = '';
+      const arr = window._discuss || [];
+      if(!arr.length) discussList.innerHTML = '<div class="small">Nenhum item marcado</div>';
+      arr.forEach(it=>{
+        const d = document.createElement('div'); d.style.padding='8px'; d.style.borderBottom='1px solid #eef2f7';
+        d.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px">
+          <div style="max-width:80%">${it.pergunta}</div>
+          <div><button class="btn secondary" data-id="${it.id}" data-act="rm">Remover</button></div>
+        </div>`;
+        discussList.appendChild(d);
+      });
+      discussList.querySelectorAll('button').forEach(b=> b.addEventListener('click', ()=>{
+        const id=b.dataset.id; window._discuss = (window._discuss||[]).filter(x=>x.id!=id); renderDiscussList();
+      }));
+    }
+
+    /* ============================
+       Analytics (simples, client-side)
+       ============================ */
+    function computeAnalytics(){
+      const total = banco.length;
+      const correctCount = state.responses.filter(r=> r.resposta && r.resposta === r.correta).length;
+      const avgTime = state.responses.length ? Math.round(state.responses.reduce((s,r)=> s + (r.time||0),0) / state.responses.length) : 0;
+      kpiAccuracy.textContent = (total ? Math.round((correctCount/total)*100) : 0) + '%';
+      kpiTime.textContent = (avgTime ? (avgTime + 's') : '--');
+      // identificar perguntas mais erradas
+      const tally = {};
+      state.responses.forEach(r => { if(!tally[r.id]) tally[r.id] = {wrong:0, total:0}; tally[r.id].total++; if(r.resposta !== r.correta) tally[r.id].wrong++; });
+      const arr = Object.keys(tally).map(id => ({id, rate: tally[id].wrong / tally[id].total}));
+      arr.sort((a,b)=> b.rate - a.rate);
+      kpiHard.textContent = arr.length ? (banco.find(q=>q.id==arr[0].id).pergunta.slice(0,40) + (banco.find(q=>q.id==arr[0].id).pergunta.length>40?'...':'')) : '—';
+      renderChart(arr);
+    }
+
+    function renderChart(arr){
+      // simples: barras de acerto por pergunta (local)
+      const ctx = chartCanvas.getContext('2d'); ctx.clearRect(0,0,chartCanvas.width,chartCanvas.height);
+      const labels = banco.map(q => q.pergunta.slice(0,20));
+      const data = banco.map(q => {
+        const stats = state.responses.filter(r=>r.id==q.id);
+        if(!stats.length) return 0;
+        const correct = stats.filter(s=>s.resposta === s.correta).length;
+        return Math.round((correct / stats.length) * 100);
+      });
+      // desenhar barras
+      const w = chartCanvas.width; const h = chartCanvas.height; const pad=28;
+      const max = 100;
+      const colW = (w - pad*2) / data.length;
+      // eixo Y
+      ctx.fillStyle='#f6f8fa'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle='#64727f'; ctx.font='12px Inter';
+      for(let i=0;i<data.length;i++){
+        const x = pad + i*colW + 6;
+        const barH = (data[i]/max) * (h - pad*2);
+        ctx.fillStyle = data[i] >= 70 ? '#1aa66b' : (data[i] >= 40 ? '#f1c40f' : '#d9534f');
+        ctx.fillRect(x, h-pad-barH, colW-12, barH);
+        ctx.fillStyle='#081029'; ctx.fillText(labels[i], x, h - 6);
+      }
+    }
+
+    refreshAnalyticsBtn.addEventListener('click', computeAnalytics);
+
+    /* ============================
+       LocalStorage: salvar / carregar estado
+       ============================ */
+    saveStateBtn.addEventListener('click', ()=> {
+      const payload = {banco, state};
+      localStorage.setItem('gti_session', JSON.stringify(payload));
+      alert('Sessão salva localmente');
+    });
+    (function tryLoad(){
+      const s = localStorage.getItem('gti_session');
+      if(s){ try{ const p = JSON.parse(s); banco = p.banco || banco; state = p.state || state; }catch(e){} }
+    })();
+
+    /* ============================
+       Impressão / Report View
+       ============================ */
+    printReportBtn.addEventListener('click', ()=> {
+      // gerar HTML de relatório básico e abrir nova janela
+      const w = window.open('', '_blank');
+      const html = `
+        <html><head><title>Relatório de Avaliação</title>
+        <style>body{font-family:Arial;padding:20px} h1{font-size:18px}</style>
+        </head><body>
+        <h1>Relatório de Sessão</h1>
+        <p>Pontos: ${state.points}</p>
+        <p>Respondidas: ${state.answered}/${banco.length}</p>
+        <h3>Respostas</h3>
+        <ul>${state.responses.map(r=>'<li>'+ (banco.find(q=>q.id==r.id)?.pergunta || r.id) + ' — resposta: ' + (r.resposta||'—') + ' — correta: ' + r.correta + '</li>').join('')}</ul>
+        </body></html>`;
+      w.document.write(html); w.document.close();
+      w.print();
+    });
+
+    /* ============================
+       UI bindings
+       ============================ */
+    startBtn.addEventListener('click', ()=> startSession());
+    nextBtn.addEventListener('click', ()=> proceedNext());
+    endBtn.addEventListener('click', ()=> endSession());
+    skipBtn.addEventListener('click', ()=>{
+      if(!banco[state.index]) return;
+      state.responses.push({id:banco[state.index].id, resposta:null, correta:banco[state.index].correta, time: null});
+      state.index++; state.answered++; renderQuestion();
+    });
+    hintBtn.addEventListener('click', ()=> {
+      if(!banco[state.index]) return;
+      hintEl.textContent = 'Dica: ' + (banco[state.index].dica || 'Sem dica disponível');
+      state.points = Math.max(0, state.points - 1); pointsEl.textContent = state.points;
+    });
+    revealBtn.addEventListener('click', ()=> {
+      if(!banco[state.index]) return;
+      feedbackEl.textContent = 'Resposta correta: ' + banco[state.index].correta;
+      state.points = Math.max(0, state.points - 2); pointsEl.textContent = state.points;
+      // marcar para discussão
+      markForDiscussion(banco[state.index]);
+    });
+
+    roleSelect.addEventListener('change', ()=> {
+      const r = roleSelect.value;
+      uNameEl.textContent = r === 'participant' ? 'Participante' : (r === 'observer' ? 'Observador' : 'Avaliador');
+    });
+
+    themeSelect.addEventListener('change', ()=>{
+      if(themeSelect.value==='dark'){
+        document.body.style.background = 'linear-gradient(180deg,#05060a,#071024)';
+        document.querySelector('.app').style.filter = 'none';
+      } else if(themeSelect.value==='print'){
+        document.body.style.background = '#fff';
+        document.querySelector('.app').style.boxShadow='none';
+      } else {
+        document.body.style.background = 'linear-gradient(180deg,#0f1724 0%,#0b1220 50%)';
+      }
+    });
+
+    langSelect.addEventListener('change', ()=>{
+      // simples: mudar alguns textos
+      if(langSelect.value==='en'){
+        document.querySelector('h1').textContent = 'IT Governance Interactive';
+        document.querySelector('.sub').textContent = 'Assessment environment, CMS, analytics and reports';
+        startBtn.textContent = 'Start Session';
+        document.getElementById('qTxt').placeholder = 'Question text';
+        document.getElementById('optsTxt').placeholder = 'Options separated by "|" mark correct with [*]';
+      } else {
+        document.querySelector('h1').textContent = 'Governança de TI Interativa';
+        document.querySelector('.sub').textContent = 'Ambiente de avaliação, CMS, analytics e relatórios';
+        startBtn.textContent = 'Iniciar Sessão';
+        document.getElementById('qTxt').placeholder = 'Enunciado da pergunta';
+        document.getElementById('optsTxt').placeholder = 'Alternativas separadas por \'|\', marque correta com [*] ex: Verde|Amarelo|[*]Vermelho';
+      }
+    });
+
+    refreshUI();
+    renderQuestion();
+    renderDiscussList();
+    computeAnalytics();
+
+    /* ============================
+       Observações e placeholders
+       ============================
+       - SSO / autenticação e integração backend são representados como placeholders.
+       - Multiplayer real-time exigiria servidor/websocket; aqui há sessão local para simular turnos.
+       - Certificados digitais e emissão assinada requer backend; é possível gerar PDFs client-side com bibliotecas.
+       - Exportações são geradas localmente (CSV/JSON) para avaliação.
+    ============================ */
+  </script>
+</body>
+</html>

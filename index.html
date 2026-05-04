@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RyzenTech - Início</title>
+
+  <!-- Tailwind e Ícones -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(reg => console.log("Service Worker registrado:", reg.scope))
+          .catch(err => console.log("Erro ao registrar SW:", err));
+      });
+    }
+  </script>
+
+  <style>
+    body { background: url("imag/gold34.jpg") center/cover fixed no-repeat; }
+    .overlay { background: rgba(0,0,0,0.65); min-height: 100vh; }
+    .sidebar { width: 4.5rem; transition: width .3s ease; }
+    .sidebar:hover { width: 16rem; }
+    .sidebar .text-label { opacity:0; transition: opacity .3s ease; white-space:nowrap; }
+    .sidebar:hover .text-label { opacity:1; }
+  </style>
+</head>
+<body class="text-white">
+  <div class="overlay flex">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-black/50 backdrop-blur-md shadow-xl flex flex-col p-4 items-center">
+      <div class="flex flex-col items-center mb-8">
+        <img src="Imag/drag logo.png" alt="Logo" class="w-12 h-12 mb-2 rounded-full border-2 border-gray-400 shadow-lg">
+        <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent">G.F</h1>
+        <span class="text-xs text-gray-400 text-label">Grupo Faberge</span>
+      </div>
+      <nav class="flex flex-col gap-3 w-full">
+        <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-700/60 shadow-md">
+          <i data-lucide="home" class="w-5 h-5"></i><span class="text-label">Home</span>
+        </a>
+        <a href="checklist.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="cpu" class="w-5 h-5"></i><span class="text-label">Cad. Equipamentos</span>
+        </a>
+        <a href="_!DOCTYPE html_ (3).html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="check-circle" class="w-5 h-5"></i><span class="text-label">Governança Interativa</span>
+        </a>
+        <a href="Usuario.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="users" class="w-5 h-5"></i><span class="text-label">Usuários</span>
+        </a>
+        <a href="teste.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="check-circle" class="w-5 h-5"></i><span class="text-label">Teste/Conformidade</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-600/40 transition">
+          <i data-lucide="log-out" class="w-5 h-5"></i><span class="text-label">Sair</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-1 p-8">
+      <h1 class="text-3xl font-extrabold mb-6 bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent drop-shadow-lg">
+        Bem-vindo ao Sistema RyzenTech
+      </h1>
+      <p class="text-gray-300 mb-4">Aqui você pode gerenciar os equipamentos, usuários e realizar testes de conformidade com LGPD e Compliance.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="checklist.html" class="bg-slate-900/60 rounded-xl p-6 shadow-lg hover:bg-slate-800/70 transition">
+          <i data-lucide="cpu" class="w-8 h-8 mb-3"></i>
+          <h2 class="text-lg font-semibold">Cadastro de Equipamentos</h2>
+          <p class="text-gray-400 text-sm">Registrar novos dispositivos e informações técnicas.</p>
+        </a>
+        <a href="Usuario.html" class="bg-slate-900/60 rounded-xl p-6 shadow-lg hover:bg-slate-800/70 transition">
+          <i data-lucide="users" class="w-8 h-8 mb-3"></i>
+          <h2 class="text-lg font-semibold">Gestão de Usuários</h2>
+          <p class="text-gray-400 text-sm">Cadastrar e gerenciar os colaboradores que utilizam os equipamentos.</p>
+        </a>
+        <a href="teste.html" class="bg-slate-900/60 rounded-xl p-6 shadow-lg hover:bg-slate-800/70 transition">
+          <i data-lucide="check-circle" class="w-8 h-8 mb-3"></i>
+          <h2 class="text-lg font-semibold">Testes de Conformidade</h2>
+          <p class="text-gray-400 text-sm">Executar verificações de conformidade LGPD e Compliance.</p>
+        </a>
+        <a href="conformidade.html" class="bg-slate-900/60 rounded-xl p-6 shadow-lg hover:bg-slate-800/70 transition">
+          <i data-lucide="shield" class="w-8 h-8 mb-3"></i>
+          <h2 class="text-lg font-semibold">Política LGPD & Compliance</h2>
+          <p class="text-gray-400 text-sm">Leia e certifique as regras de conformidade antes dos testes.</p>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

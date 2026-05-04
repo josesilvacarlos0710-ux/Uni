@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RyzenTech - Teste de Conformidade</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="main.js"></script>
+  <style>
+    body { background: url("imag/gold34.jpg") center/cover fixed no-repeat; }
+    .overlay { background: rgba(0,0,0,0.65); min-height: 100vh; }
+    .sidebar { width: 4.5rem; transition: width .3s ease; }
+    .sidebar:hover { width: 16rem; }
+    .sidebar .text-label { opacity:0; transition: opacity .3s ease; white-space:nowrap; }
+    .sidebar:hover .text-label { opacity:1; }
+  </style>
+</head>
+<body class="text-white">
+  <div class="overlay flex">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-black/50 backdrop-blur-md shadow-xl flex flex-col p-4 items-center">
+      <div class="flex flex-col items-center mb-8">
+        <img src="Imag/drag logo.png" class="w-12 h-12 mb-2 rounded-full border-2 border-gray-400 shadow-lg" alt="Logo">
+        <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent">G.F</h1>
+        <span class="text-xs text-gray-400 text-label">Grupo Faberge</span>
+      </div>
+      <nav class="flex flex-col gap-3 w-full">
+        <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="home" class="w-5 h-5"></i><span class="text-label">Home</span>
+        </a>
+        <a href="checklist.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="cpu" class="w-5 h-5"></i><span class="text-label">Cad. Equipamentos</span>
+        </a>
+        <a href="Usuario.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-600/40 transition">
+          <i data-lucide="users" class="w-5 h-5"></i><span class="text-label">Usuários</span>
+        </a>
+        <a href="teste.html" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-700/60 shadow-md">
+          <i data-lucide="check-circle" class="w-5 h-5"></i><span class="text-label">Teste/Conformidade</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-600/40 transition">
+          <i data-lucide="log-out" class="w-5 h-5"></i><span class="text-label">Sair</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-1 p-8">
+      <h1 class="text-3xl font-extrabold mb-6 bg-gradient-to-r from-emerald-300 via-white to-emerald-500 bg-clip-text text-transparent drop-shadow-lg">
+        Teste de Conformidade
+      </h1>
+      <div id="listaTestes" class="space-y-4"></div>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+  <script>
+    lucide.createIcons();
+
+    // --- Verifica se acabou de passar pela conformidade antes de renderizar ---
+    const justCertified = JSON.parse(localStorage.getItem("justCertified") || "null");
+    if(justCertified){
+      let testes = JSON.parse(localStorage.getItem("testes")) || [];
+      const idx = testes.findIndex(t => t.cpf===justCertified.cpf && t.serie===justCertified.serie);
+      if(idx>=0) {
+        testes[idx].conforme = "OK";
+      } else {
+        testes.push({cpf: justCertified.cpf, serie: justCertified.serie, conforme:"OK"});
+      }
+      localStorage.setItem("testes", JSON.stringify(testes));
+      localStorage.removeItem("justCertified");
+    }
+
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `px-4 py-2 rounded-lg shadow-lg text-white flex items-center gap-2 animate-fadeIn ${
+        type === "success" ? "bg-green-600" : "bg-red-600"
+      }`;
+      toast.innerHTML = `<i data-lucide="${type === "success" ? "check-circle" : "x-circle"}" class="w-5 h-5"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons({ icons: [toast.querySelector("i")] });
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "transition");
+        setTimeout(() => toast.remove(), 500);
+      }, 2500);
+    }
+
+    function listarChecklists(){ return JSON.parse(localStorage.getItem("cadastros")) || []; }
+    function listarTestes(){ return JSON.parse(localStorage.getItem("testes")) || []; }
+
+    function salvarTeste(cpf, serie, conforme){
+      let testes = listarTestes();
+      const idx = testes.findIndex(t => t.cpf===cpf && t.serie===serie);
+      if(idx>=0) {
+        testes[idx].conforme = conforme;
+      } else {
+        testes.push({cpf, serie, conforme});
+      }
+      localStorage.setItem("testes", JSON.stringify(testes));
+      showToast(`Máquina agora está ${conforme === "OK" ? "Conforme" : "Não Conforme"}`, conforme === "OK" ? "success" : "error");
+    }
+
+    function requestConformidadeBeforeOK(cpf, serie){
+      localStorage.setItem("pendingConformidade", JSON.stringify({cpf, serie}));
+      window.location.href = "conformidade.html";
+    }
+
+    function excluirCadastro(cpf) {
+      let cadastros = listarChecklists();
+      cadastros = cadastros.filter(c => c.usuario.cpf !== cpf);
+      localStorage.setItem("cadastros", JSON.stringify(cadastros));
+      let testes = listarTestes();
+      testes = testes.filter(t => t.cpf !== cpf);
+      localStorage.setItem("testes", JSON.stringify(testes));
+      showToast("Cadastro excluído com sucesso", "error");
+      render();
+    }
+
+    function render(){
+      const div = document.getElementById("listaTestes");
+      div.innerHTML = "";
+      const checklists = listarChecklists();
+      if(checklists.length===0){
+        div.innerHTML = "<p class='text-gray-400'>Nenhum equipamento cadastrado.</p>";
+        return;
+      }
+      const testes = listarTestes();
+      checklists.forEach(cl=>{
+        const t = testes.find(x=>x.cpf===cl.usuario.cpf && x.serie===cl.equip.serie);
+        const status = t ? t.conforme : "";
+        const card = document.createElement("div");
+        card.className="border border-slate-700 rounded-xl p-5 bg-slate-900/60 flex justify-between items-center shadow-lg hover:scale-[1.01] transition";
+        card.innerHTML=`
+          <div>
+            <p><strong>${cl.usuario.nome}</strong> (${cl.usuario.cpf})</p>
+            <p>${cl.equip.modelo} - Série/Placa: ${cl.equip.serie}</p>
+            <p class="text-sm text-gray-400">${cl.usuario.email} | ${cl.usuario.tel}</p>
+            ${status==="OK" ? `<span class="inline-block mt-2 px-2 py-1 bg-green-700 text-xs rounded">Conformidade Aprovada</span>` : ""}
+            ${status==="NOK" ? `<span class="inline-block mt-2 px-2 py-1 bg-red-700 text-xs rounded">Não Conforme</span>` : ""}
+          </div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition"
+              onclick="requestConformidadeBeforeOK('${cl.usuario.cpf}','${cl.equip.serie}')">
+              Verificar Conformidade
+            </button>
+            <button class="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700 transition"
+              onclick="salvarTeste('${cl.usuario.cpf}','${cl.equip.serie}','NOK');render();">
+              Marcar Não Conforme
+            </button>
+            <button class="px-3 py-1 rounded-lg bg-gray-600 hover:bg-gray-700 transition"
+              onclick="excluirCadastro('${cl.usuario.cpf}')">
+              Excluir
+            </button>
+          </div>`;
+        div.appendChild(card);
+      });
+    }
+
+    render();
+  </script>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+  </style>
+</body>
+</html>
